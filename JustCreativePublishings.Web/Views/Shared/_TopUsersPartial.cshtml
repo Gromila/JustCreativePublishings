@@ -1,0 +1,13 @@
+﻿@using App_LocalResources
+@model List<JustCreativePublishings.Web.Models.UserViewModel>
+
+
+@foreach (var user in Model)
+{
+    <div class="list-group-item">
+        <div class="row">
+            <div class="col-md-8">@Html.ActionLink(user.UserName, "Profile", "User", new { username = user.UserName }, null)</div>
+            <div class="col-md-4">@GlobalRes.Posts: <span class="badge">@user.Posts.Count</span></div>
+        </div>
+    </div>
+}

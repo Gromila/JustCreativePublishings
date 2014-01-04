@@ -1,0 +1,9 @@
+﻿@using App_LocalResources
+@model List<JustCreativePublishings.Domain.Entities.Tag>
+
+<div id="taglist" class="taglist">
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        <a href="@Url.Action("SearchByTag", "Search", new { id = Model[i].Id })" class="tag @String.Format("tag{0}", i/2)">@String.Format(GlobalRes.Tag, Model[i].Content, Model[i].Posts.Count)</a>
+    }
+</div>

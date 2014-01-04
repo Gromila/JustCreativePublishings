@@ -1,0 +1,11 @@
+﻿@using App_LocalResources
+@model IEnumerable<JustCreativePublishings.Domain.Entities.Tag>
+
+
+@foreach (var tag in Model)
+{
+    <div class="list-group-item">
+        @Html.ActionLink(String.Format(GlobalRes.Tag, tag.Content, tag.Posts.Count), "SearchByTag", "Search", new { id = tag.Id }, null)
+    </div>
+    
+}

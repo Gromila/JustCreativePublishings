@@ -1,0 +1,88 @@
+﻿@using App_LocalResources
+@{
+    ViewBag.Title = GlobalRes.Welcome;
+}
+<div class="alert alert-info">
+    <h2>@GlobalRes.UserStats</h2>
+    <div class="row">
+        @Html.Action("GetMainChart", "Home")
+    </div>
+    <div class="alert alert-warning">
+        @GlobalRes.UserStatsComments
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <div class="panel-title">@GlobalRes.Tags</div>
+            </div>
+            <div class="panel-body">
+                @Html.Action("GetTagCloud", "Post", new { number = 18 })        
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <div class="panel-title">@GlobalRes.TopUsers</div>
+            </div>
+            <div class="panel-body list-group">
+                @Html.Action("GetTopUsers", "User", new { number = 10 })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <div class="panel-title">@GlobalRes.TopPosts</div>
+            </div>
+            <div class="panel-body list-group">
+                @Html.Action("GetTopPosts", "Post", new { number = 10 })
+            </div>
+        </div>
+    </div>
+</div>
+
+@section css {
+    <link rel="stylesheet" type="text/css" href="~/Content/jquery.xdcloudtags.css"/>
+    <link rel="stylesheet" type="text/css" href="~/Content/cloudstyles.css"/>
+}
+
+
+@section scripts {
+    <script type="text/javascript" src="~/Scripts/raphael-min.js"></script>
+    <script type="text/javascript" src="~/Scripts/charts.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.xdcloudtags.min.js"></script>
+    <script type="text/javascript">
+        function get_random_color() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.round(Math.random() * 15)];
+            }
+            return color;
+        }
+
+        var chart;
+        for (var i = 0; i < $("#charts").data("number"); i++) {
+            chart = new Charts.CircleProgress(
+                'chart_' + i,
+                $('#chart_' + i).data("user"),
+                $('#chart_' + i).data("percent"),
+                {
+                    font_color: "#fff",
+                    fill_color: "#444",
+                    label_color: "#333",
+                    text_shadow: "rgba(0,0,0,.4)",
+                    stroke_color: get_random_color()
+                }
+            );
+            chart.draw();
+        }
+
+        $(document).ready(function() {
+            $("#taglist").xdCloudTags({ save: true, invert: true });
+        });
+    </script>
+}

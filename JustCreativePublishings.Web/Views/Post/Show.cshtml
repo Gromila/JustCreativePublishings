@@ -1,0 +1,95 @@
+﻿@using System.Globalization
+@using System.Web.Razor.Parser.SyntaxTree
+@using App_LocalResources
+@using Microsoft.AspNet.Identity
+@model JustCreativePublishings.Web.Models.PostViewModel
+@{
+    ViewBag.Title = GlobalRes.ShowPost;
+}
+
+<div class="container">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <h2>
+                    <button id="voteup" type="button" class="btn btn-success"><span class="glyphicon glyphicon-chevron-up"></span></button>
+                    <a href="#" class="votes">@Model.VotesValue</a>
+                    <button id="votedown" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    @Model.Title
+                    @Html.ActionLink(GlobalRes.ReadingMode, "ReadingMode", "Post", new { id = Model.Id }, new { @class = "btn btn-info" })
+                    @if (Request.IsAuthenticated && User.Identity.GetUserId() == Model.UserId)
+                    {
+                        @Html.ActionLink(GlobalRes.Edit, "Edit", "Post", new { id = Model.Id }, new { @class = "btn btn-warning", style = "margin-right: 10px;" })
+                    }
+                    @if (Request.IsAuthenticated && (User.Identity.GetUserId() == Model.UserId || User.IsInRole("Admin")))
+                    {
+                        @Html.ActionLink(GlobalRes.Remove, "Delete", "Post", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                    }
+                </h2>          
+            </div>
+        </div>
+        <div class="panel-body">
+            <blockquote>
+                <p>@GlobalRes.Created: @Model.CreationDate.ToLocalTime().ToLongDateString() @Model.CreationDate.ToLocalTime().ToLongTimeString()</p>
+                <p>@GlobalRes.Updated: @Model.LastUpdateDate.ToLocalTime().ToLongDateString() @Model.LastUpdateDate.ToLocalTime().ToLongTimeString()</p>
+                <p>@Model.ShortDescription</p>
+            </blockquote>
+
+            <div class="chapters">
+                @foreach (var chapter in Model.Chapters)
+                {
+                    @Html.Partial("Shared/_ChapterPartial", chapter);
+                }
+            </div>
+        
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <span class="badge">@Html.ActionLink(String.Format(GlobalRes.Tag, tag.Content, tag.Posts.Count), "SearchByTag", "Search", new { tagId = tag.Id }, new { @class = "badge" })</span>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <h4 class="pull-right">@GlobalRes.Author: @Html.ActionLink(Model.Author, "Profile", "User", new { username = Model.Author }, null)</h4>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('.chapters').on('click', 'button', function () {
+            $(this).parent().parent().find('.panel-body').toggleClass('hidden');
+        });
+
+        $('button#voteup').click(function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Vote", "Vote", new { voteValue = 1, id = Model.Id })",
+                data: "votes=" + $(".votes").text(),
+                success: function (data) {
+                    $(".votes").text(data);
+                }
+            });
+        });
+
+        $('button#votedown').click(function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Vote", "Vote", new { voteValue = -1, id = Model.Id })",
+                data: "votes=" + $(".votes").text(),
+                success: function(data) {
+                    $(".votes").text(data);
+                }
+            });
+        });
+    });
+    </script>
+}

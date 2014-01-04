@@ -1,0 +1,187 @@
+﻿@using App_LocalResources
+@model JustCreativePublishings.Web.Models.PostViewModel
+@{
+    ViewBag.Title = GlobalRes.InReadingMode;
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title</title>
+        @Styles.Render("~/Content/css")
+        @Styles.Render(Html.Action("GetCurrentTheme", "Base").ToString())
+        @Scripts.Render("~/bundles/modernizr")
+    </head>
+<body style="padding-top:0px;">
+    <div class="container body-content" style="margin-top: 20px;">
+        <div class="col-md-3" style="position: fixed;">
+            <div class="alert alert-info">
+                <h3>
+                    <button id="voteup" type="button" class="btn btn-success"><span class="glyphicon glyphicon-chevron-up"></span></button>
+                    <a href="#" class="votes alert-link">@Model.VotesValue</a>
+                    <button id="votedown" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    @Html.ActionLink(Model.Title, "Show", "Post", new { id = Model.Id }, new { @class = "alert-link" })
+                </h3>
+                <div class="text-center">
+                    <div class="btn-group">
+                        <button id="font-minus" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> </button>
+                        <button type="button" class="btn btn-default disabled">@GlobalRes.ChangeFontSize</button>
+                        <button id="font-plus" type="button" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> </button>
+                    </div>
+                    <br />
+                    <div class="btn-group" style="margin-top: 10px;">
+                        <button id="width-minus" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> </button>
+                        <button type="button" class="btn btn-default disabled">@GlobalRes.ChangeWidth</button>
+                        <button id="width-plus" type="button" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> </button>
+                    </div>
+                </div>
+            </div>
+            <div class="alert alert-info">
+                <div id="reading" class="collapse navbar-collapse bs-js-navbar-scrollspy">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li class="active"><a href="#desr">@GlobalRes.ShortDescription</a></li>
+                        @for (int i = 0; i < Model.Chapters.Count; i++)
+                        {
+                            <li>
+                                <a href="#@i">@Model.Chapters[i].Title</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="alert alert-info">
+                @foreach (var tag in Model.Tags)
+                {
+                    <span class="badge">@Html.ActionLink(String.Format(GlobalRes.Tag, tag.Content, tag.Posts.Count), "SearchByTag", "Search", new { tagId = tag.Id }, new { @class = "badge" })</span>
+                }
+                <br />
+                <h4>@GlobalRes.Author: @Html.ActionLink(Model.Author, "Profile", "User", new { username = Model.Author }, new { @class = "alert-link" })</h4>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-md-offset-4">
+            <div class="alert alert-warning">
+                <h2 id="desr">@GlobalRes.ShortDescription</h2>
+                <blockquote>@Model.ShortDescription</blockquote>
+            </div>
+            <div data-spy="scroll" data-target="#reading" data-offset="0" class="scrollspy">
+                @for (int i = 0; i < Model.Chapters.Count; i++)
+                {
+                    <div class="alert alert-warning">
+                        <h2 id="@i">@GlobalRes.Chapter: @Model.Chapters[i].OrderNumber. @Model.Chapters[i].Title</h2>
+                        <p>@Html.Markdown(Model.Chapters[i].Content)</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container panel panel-primary footer">
+            <div class="panel-body">
+                ©@DateTime.Now.Year
+                <div class="pull-right">
+                    @GlobalRes.PoweredBy
+                </div>
+            </div>
+        </div>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script type="text/javascript">
+        $(window).on('beforeunload', function () {
+            var currentPosition = scrollY - $('.scrollspy').position()['top'];
+            var height = $('.scrollspy').height();
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("SavePosition", "Post", new { postId = Model.Id })",
+                data: "y=" + currentPosition + "&max=" + height,
+                async: false,
+                success: function () {
+                    var a = "because it must be";
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("LoadPosition", "Post", new { postId = Model.Id })",
+                success: function (result) {
+                    var pos = parseFloat(result);
+                    if (pos > 0) {
+                        scrollTo(0, $('.scrollspy').position()['top'] + ($('.scrollspy').height() * pos));
+                    }
+                }
+            });
+
+            $('#font-plus').on('click', function() {
+                var currentSize = parseFloat($('.scrollspy p').css('font-size'), 10);
+                var newSize = currentSize * 1.2;
+                if (newSize > 30)
+                    newSize = 30;
+                $('.scrollspy p').css('font-size', newSize);
+                $('.scrollspy code').css('font-size', newSize);
+            });
+            
+            $('#font-minus').on('click', function () {
+                var currentSize = parseFloat($('.scrollspy p').css('font-size'), 10);
+                var newSize = currentSize * 0.8;
+                if (newSize < 8)
+                    newSize = 8;
+                $('.scrollspy p').css('font-size', newSize);
+                $('.scrollspy code').css('font-size', newSize);
+            });
+
+            var maxWidth = $('.scrollspy').width() + parseFloat($('.body-content').css('margin-right'), 10) + parseFloat($('.body-content').css('margin-left'), 10);
+            var minWidth = $('.scrollspy').width() / 10;
+
+            $('#width-plus').on('click', function () {
+                var currentWidth = $('.scrollspy').width();
+                var newWidth = currentWidth * 1.03;
+                if (newWidth > maxWidth)
+                    newWidth = maxWidth;
+                $('.scrollspy').css('width', newWidth);
+            });
+
+            $('#width-minus').on('click', function() {
+                var currentWidth = $('.scrollspy').width();
+                var newWidth = currentWidth * 0.97;
+                if (newWidth < minWidth)
+                    newWidth = minWidth;
+                $('.scrollspy').css('width', newWidth);
+            });
+
+            $('body').scrollspy({ target: '#reading' });
+
+            $('button#voteup').click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("Vote", "Vote", new { voteValue = 1, id = Model.Id })",
+                    data: "votes=" + $(".votes").text(),
+                    success: function (data) {
+                        $(".votes").text(data);
+                    }
+                });
+            });
+
+            $('button#votedown').click(function () {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("Vote", "Vote", new { voteValue = -1, id = Model.Id })",
+                    data: "votes=" + $(".votes").text(),
+                    success: function (data) {
+                        $(".votes").text(data);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+
+
+</html>

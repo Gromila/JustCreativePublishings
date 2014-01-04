@@ -1,0 +1,13 @@
+﻿@using App_LocalResources
+@model List<JustCreativePublishings.Web.Models.PostViewModel>
+@{
+    ViewBag.Title = @GlobalRes.SearchResults;
+}
+<div class="alert alert-info">
+    <div class="list-group">
+        @foreach (var post in Model)
+        {
+            @Html.Partial("_PostHeaderPartial", post)
+        }
+    </div>
+</div>

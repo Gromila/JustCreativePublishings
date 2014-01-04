@@ -1,0 +1,43 @@
+﻿@using App_LocalResources
+@{
+    ViewBag.Title = String.Format(GlobalRes.SearchResultsFor, ViewBag.SearchString);
+}
+
+<div class="col-md-3">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="panel-title">
+                @GlobalRes.Tags
+            </div>
+        </div>
+        <div class="panel-body list-group">
+            @Html.Action("SearchTags", "Search", new { searchString = ViewBag.SearchString })        
+        </div>
+    </div>
+</div> 
+
+<div class="col-md-3">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="panel-title">
+                @GlobalRes.Users
+            </div>
+        </div>
+        <div class="panel-body list-group">
+            @Html.Action("SearchUsers", "Search", new { searchString = ViewBag.SearchString })
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="panel-title">
+                @GlobalRes.Posts
+            </div>
+        </div>
+        <div class="panel-body list-group">
+            @Html.Action("SearchPosts", "Search", new { searchString = ViewBag.SearchString })
+        </div>
+    </div>
+</div>

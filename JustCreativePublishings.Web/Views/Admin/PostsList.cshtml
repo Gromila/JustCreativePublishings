@@ -1,0 +1,18 @@
+﻿@using App_LocalResources
+@model System.Collections.Generic.IEnumerable<JustCreativePublishings.Web.Models.PostViewModel>
+
+@{
+    ViewBag.Title = GlobalRes.Posts;
+}
+
+<div class="list-group">
+    @foreach (var post in Model)
+    {
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-10">@Html.ActionLink(post.Title, "Show", "Post", new { id = post.Id }, null)</div>
+                <div class="col-md-2">@Html.ActionLink(GlobalRes.Remove, "RemovePost", "Admin", new { postId = post.Id }, new { @class = "btn btn-danger" })</div>
+            </div>
+        </div>
+    }
+</div>

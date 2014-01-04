@@ -1,0 +1,10 @@
+﻿@model IDictionary<String, int>
+           
+<div id="charts" data-number="@Model.Count">
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div class="col-md-3">
+            <div id="chart_@i" data-percent="@Model.Values.ToList()[i]" data-user="@Model.Keys.ToList()[i]" style="width: 250px; height: 250px; margin: 15px;"></div>
+        </div>
+    }
+</div>

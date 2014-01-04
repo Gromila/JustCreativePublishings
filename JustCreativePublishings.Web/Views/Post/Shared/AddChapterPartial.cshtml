@@ -1,0 +1,9 @@
+﻿@model int
+
+<div class="form-group chapter" id="chapter-@Model">
+    @Html.Label(String.Format("Chapters[{0}].Title", Model))
+    @Html.TextBox(String.Format("Chapters[{0}].Title", Model), String.Empty, new { @class = "form-control" })
+
+    @Html.Label(String.Format("Chapters[{0}].Content", Model))
+    @Html.TextArea(String.Format("Chapters[{0}].Content", Model), String.Empty, 15, 2, new { @class = "form-control" })
+</div>

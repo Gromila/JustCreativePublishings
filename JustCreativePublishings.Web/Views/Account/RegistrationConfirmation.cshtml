@@ -1,0 +1,8 @@
+﻿@using App_LocalResources
+@{
+    ViewBag.Title = GlobalRes.SuccessfulRegistration;
+}
+
+<div class="col-md-12 alert alert-success">
+    @GlobalRes.SuccessfulRegistration. @Html.ActionLink("Sign in.", "Login", "Account", null, new { @class = "alert-link "})
+</div>

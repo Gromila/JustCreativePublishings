@@ -1,0 +1,82 @@
+﻿@using App_LocalResources
+@model JustCreativePublishings.Web.Models.UserViewModel
+
+@{
+    ViewBag.Title = Model.UserName;
+}
+
+<div class="col-md-4">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="panel-title">@GlobalRes.ProfileInfo</div>
+        </div>
+        <div class="panel-body list-group">
+            <div class="list-group-item">
+                @Html.Action("UserStats", "User", new { userId = Model.Id })
+            </div>
+            <div class="list-group-item caption">@GlobalRes.Username: @Model.UserName</div>
+            <div class="list-group-item">@GlobalRes.DateOfBirth: @Model.DateOfBirth.ToShortDateString()</div>
+            <div class="list-group-item">@GlobalRes.WithUsSince: @Model.RegistrationDate.ToShortDateString()</div>
+            <div class="list-group-item">@GlobalRes.Posts <span class="badge">@Model.Posts.Count</span></div>
+            <div class="list-group-item">@GlobalRes.Votes <span class="badge">@Model.Votes.Count</span></div>
+
+        </div>
+    </div>
+    <br />
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="panel-title">@GlobalRes.LastVotes</div>
+        </div>
+        <div class="panel-body list-group">
+            @Html.Action("ShowLastVotes", "Vote", new { userId = Model.Id })
+        </div>
+    </div>
+    <br />
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="panel-title">@GlobalRes.Tags</div>
+        </div>
+        <div class="panel-body list-group">
+            @Html.Action("ShowLastTags", "Post", new { userId = Model.Id })
+        </div>
+    </div>
+</div>
+
+<div class="col-md-8">
+    <div class="list-group">
+        @foreach (var post in Model.Posts)
+        {
+            @Html.Partial("_PostHeaderPartial", post)
+        }
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="~/Scripts/raphael-min.js"></script>
+    <script type="text/javascript" src="~/Scripts/charts.min.js"></script>
+    <script type="text/javascript">
+        function get_random_color() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.round(Math.random() * 15)];
+            }
+            return color;
+        }
+        
+        chart = new Charts.CircleProgress(
+            'chart',
+            $('#chart').data("user"),
+            $('#chart').data("percent"),
+            {
+                font_color: "#fff",
+                fill_color: "#444",
+                label_color: "#333",
+                text_shadow: "rgba(0,0,0,.4)",
+                stroke_color: get_random_color()
+            }
+        );
+        chart.draw();
+    </script>
+
+}

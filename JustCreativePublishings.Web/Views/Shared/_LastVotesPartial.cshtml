@@ -1,0 +1,9 @@
+﻿@using App_LocalResources
+@model List<JustCreativePublishings.Web.Models.VoteViewModel>
+
+@foreach (var vote in Model)
+{
+    <div class="list-group-item">
+        @String.Format(GlobalRes.VoteFor, vote.Value) @Html.ActionLink(vote.Post.Title, "Show", "Post", new { id = vote.Post.Id }, null)
+    </div>
+}

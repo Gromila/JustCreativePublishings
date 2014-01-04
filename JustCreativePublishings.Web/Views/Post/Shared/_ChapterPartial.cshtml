@@ -1,0 +1,11 @@
+﻿@model JustCreativePublishings.Web.Models.ChapterViewModel
+
+<div class="panel panel-primary">
+    <div class="panel-heading chapter">
+        <button class="btn btn-primary panel-title" style="width:100%;">@Model.OrderNumber. @Model.Title</button>
+    </div>
+
+    <div class="panel-body hidden">
+        @Html.Markdown(Model.Content)
+    </div>
+</div>

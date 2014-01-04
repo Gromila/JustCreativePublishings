@@ -1,0 +1,35 @@
+﻿@using App_LocalResources
+@model System.Collections.Generic.IEnumerable<JustCreativePublishings.Web.Models.UserViewModel>
+
+@{
+    ViewBag.Title = GlobalRes.UserList;
+}
+<div class="list-group">
+    @foreach (var user in Model)
+    {
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-4">@Html.ActionLink(user.UserName, "Profile", "User", new { username = user.UserName }, null)</div>
+                <div class="col-md-4">
+                    @using (Html.BeginForm("ChangeRole", "Admin", new { userId = user.Id}, FormMethod.Post))
+                    {
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    @Html.DropDownList("role", new List<SelectListItem>() { new SelectListItem() { Selected = false, Text = "User", Value = "User" }, new SelectListItem() { Selected = false, Text = "Admin", Value = "Admin" } }, GlobalRes.SelectRole, new { @class = "form-control"})
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="submit" class="btn btn-danger" value="@GlobalRes.Submit" />
+                            </div>
+                        </div>
+
+                    }
+                </div>
+                <div class="col-md-4">
+                    @Html.ActionLink(GlobalRes.ResetPassword, "ResetPassword", "Admin", new { userId = user.Id }, new { @class = "btn btn-danger " })
+                </div>
+            </div>
+        </div>
+    }
+</div>

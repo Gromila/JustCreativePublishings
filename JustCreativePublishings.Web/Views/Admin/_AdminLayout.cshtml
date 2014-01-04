@@ -1,0 +1,45 @@
+﻿@using App_LocalResources
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@String.Format(GlobalRes.AdminPageTitle,ViewBag.Title)</title>
+        @Styles.Render("~/Content/css")
+        @Styles.Render(Html.Action("GetCurrentTheme", "Base").ToString())
+        @Scripts.Render("~/bundles/modernizr")
+        @RenderSection("css", required: false)
+    </head>
+    <body>
+        @Html.Partial("_NavigationBarPartial")
+        <div class="container page-header header">
+            <h1>@ViewBag.Title</h1>
+        </div>
+        <div class="container body-content">
+            <div class="col-md-3">
+                <div class="alert alert-info">
+                    <ul class="nav nav-pills nav-stacked">
+                        @Html.Partial("_AdminMenuPartial")
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-9">
+                @RenderBody()                
+            </div>
+        </div>
+        <footer>
+            <div class="container panel panel-primary footer">
+                <div class="panel-body">
+                    ©@DateTime.Now.Year
+                    <div class="pull-right">
+                        @GlobalRes.PoweredBy
+                    </div>
+                </div>
+            </div>
+        </footer>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    </body>
+</html>

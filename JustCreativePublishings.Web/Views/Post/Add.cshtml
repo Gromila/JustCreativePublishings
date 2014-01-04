@@ -1,0 +1,116 @@
+﻿@using App_LocalResources
+@model JustCreativePublishings.Web.Models.PostViewModel 
+
+
+@{
+    ViewBag.Title = GlobalRes.AddPost;
+}
+
+@using (Html.BeginForm("Add", "Post", FormMethod.Post, new { id = "add-form"}))
+{
+    @Html.ValidationSummary(true)
+    <div class="col-md-5">
+        <div class="form-group">
+            @Html.LabelFor(m => m.Title)
+            @Html.TextBoxFor(m => m.Title, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Title)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ShortDescription)
+            @Html.TextAreaFor(m => m.ShortDescription, new { @class = "form-control", rows = "3" })
+            @Html.ValidationMessageFor(m => m.ShortDescription)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.TagsString)
+            @Html.TextBoxFor(m => m.TagsString, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.TagsString)
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div id="chapters">
+            <blockquote><a href="http://daringfireball.net/projects/markdown/syntax">@GlobalRes.MarkdownHelp</a></blockquote>
+            @Html.Partial("Shared/AddChapterPartial", 0)
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-primary" id="add">@GlobalRes.AddChapter</button>
+            <button type="button" class="btn btn-primary" id="remove">@GlobalRes.RemoveChapter</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn btn-default" />
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript" src="~/Scripts/sisyphus.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery.cookie.js"></script>
+    <script type="text/javascript">
+        chapters = 2;
+
+        $(document).ready(function () {
+           $(function () {
+                $("#add-form").sisyphus();
+            });
+            
+            function addChapter() {
+                $.ajax({
+                    type: 'GET',
+                    url: "@Url.Action("AddChapterInForm", "Post")",
+                    data: "chapters=" + chapters,
+                    success: function(result) {
+                        var domElement = $(result);
+                        $('#chapters').append(domElement);
+                        chapters++;
+                    }
+                });
+            }
+
+            $('button#add').click(function() {
+                addChapter();
+            });
+
+            $('button#remove').click(function() {
+                if (chapters > 2) {
+                    $('.chapter').last().remove();
+                    chapters--;
+                }
+            });
+        });
+
+    </script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            function split(val) {
+                return val.split(/,\s*/);
+            }
+
+            $("#TagsString").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "@Url.Action("SearchAutoCompleter", "Post")",
+                        type: "POST",
+                        dataType: "json",
+                        data: { term: request.term },
+                        success: function(data) {
+                            response($.map(data, function(item) {
+                                return { label: item, value: item };
+                            }));
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    var terms = split(this.value);
+                    terms.pop();
+                    terms.push(ui.item.value);
+                    terms.push("");
+                    this.value = terms.join(", ");
+                    return false;
+                },
+                minLength: 0
+            });
+        });
+    </script>
+}
